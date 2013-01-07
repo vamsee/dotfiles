@@ -1,0 +1,16 @@
+Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = BottomW L 90
+       , commands = [Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Swap [] 10
+                    , Run Com "~/.xmonad/get-volume" [] "myvolume" 10
+                    , Run Date "%a %b %_d %l:%M %p" "date" 10
+                    , Run BatteryP ["BAT1"] ["-t", "<acstatus> <leftbar>", "--", "-f", "ADP1/online", "--", "-c", "energy_full"] 600
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %battery% | %cpu% | %memory% | %myvolume% * %swap%    <fc=#ee9a00>%date%</fc>    "
+       }
