@@ -10,13 +10,13 @@ import XMonad.Actions.SpawnOn
 myManageHook = composeAll
    [ className =? "Chromium"      --> doShift "1"
    , className =? "Skype"         --> doShift "2"
-   , className =? "emacs24"       --> doShift "3"
-   , className =? "terminator"    --> doShift "4"
+   , className =? "Emacs"         --> doShift "3"
+   , className =? "Terminator"    --> doShift "4"
    , className =? "Thunderbird"   --> doShift "5"
    ]
 
 main = do
-    xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmobarrc"
+    xmproc <- spawnPipe "~/.cabal/bin/xmobar ~/.xmobarrc"
     xmonad $ defaultConfig
         { manageHook = manageDocks <+> myManageHook <+> manageHook defaultConfig
         , layoutHook = avoidStruts  $  layoutHook defaultConfig
@@ -40,4 +40,8 @@ main = do
         , ((0, 0x1008ff13), spawn "amixer -q set Master 5%+")
         -- XF86AudioLowerVolume
         , ((0, 0x1008ff11), spawn "amixer -q set Master 5%-")
+        -- XF86MonBrightnessUp
+        , ((0, 0x1008ff02), spawn "xbacklight + 10")
+        -- XF86MonBrightnessDown
+        , ((0, 0x1008ff03), spawn "xbacklight - 10")
         ]

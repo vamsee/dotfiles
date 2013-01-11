@@ -19,4 +19,7 @@ pulseaudio --start &
 
 xscreensaver -no-splash &
 
+xautolock -time 15 -locker "dbus-send --print-reply --system --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Suspend" &
+chromium-browser &
+
 exec dbus-launch --sh-syntax --exit-with-session xmonad
