@@ -10,7 +10,7 @@ import XMonad.Actions.SpawnOn
 myManageHook = composeAll
    [ className =? "Chromium"      --> doShift "1"
    , className =? "Skype"         --> doShift "2"
-   , className =? "Emacs"         --> doShift "3"
+   , className =? "Emacs24"       --> doShift "3"
    , className =? "Terminator"    --> doShift "4"
    , className =? "Thunderbird"   --> doShift "5"
    ]
