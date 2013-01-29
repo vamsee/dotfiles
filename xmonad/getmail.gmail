@@ -1,0 +1,9 @@
+[retriever]
+type = SimplePOP3SSLRetriever
+server = pop.gmail.com
+username = your.mailid@gmail.com
+password = yourpass
+
+[destination]
+type = MDA_external
+path = /usr/bin/procmail

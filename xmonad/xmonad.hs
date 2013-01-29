@@ -12,7 +12,8 @@ myManageHook = composeAll
    , className =? "Skype"         --> doShift "2"
    , className =? "Emacs24"       --> doShift "3"
    , className =? "Terminator"    --> doShift "4"
-   , className =? "Thunderbird"   --> doShift "5"
+   , className =? "Thunar"        --> doShift "5"
+   , className =? "Xfce4-notifyd" --> doIgnore
    ]
 
 main = do

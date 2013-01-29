@@ -1,0 +1,18 @@
+MAILDIR=$HOME/.mail
+DEFAULT=$MAILDIR/inbox/
+LOGFILE=$MAILDIR/log
+
+# create these two directories under .mail, like inbox and
+# make sure each has Maildir structure - cur,new,tmp dirs inside
+
+:0
+* ^To: rubyonrails-core@googlegroups.com
+rails-core/
+
+:0
+* ^To: vagrant-up@googlegroups.com
+vagrant/
+
+:0
+$DEFAULT
+
