@@ -1,3 +1,5 @@
+;; Likely to work only with Emacs24
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (setq x-select-enable-clipboard t)
@@ -72,15 +74,6 @@
 (global-set-key [f11] 'previous-buffer)
 (global-set-key [f12] 'next-buffer)
 
-(require 'mime-w3m)
-(require 'flymake)
-(defun flymake-erlang-init ()
-    (list "~/Dropbox/erl/flymake/flymake-erl" (list buffer-file-name)))
-(add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
-(add-hook 'find-file-hook 'flymake-find-file-hook)
-(global-set-key [f3] 'flymake-display-err-menu-for-current-line)
-(global-set-key [f4] 'flymake-goto-next-error)
-
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
 
@@ -92,6 +85,9 @@
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; Add milkypostman's repository
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
