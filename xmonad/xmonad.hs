@@ -1,7 +1,10 @@
 import XMonad
 import XMonad.Actions.CycleWS
+import XMonad.Actions.PhysicalScreens
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers (composeOne, isFullscreen, isDialog,  doFullFloat, doCenterFloat)
+import XMonad.Layout.NoBorders
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Run(spawnPipe)
 import System.IO
@@ -10,17 +13,19 @@ import XMonad.Actions.SpawnOn
 myManageHook = composeAll
    [ className =? "Chromium"      --> doShift "1"
    , className =? "Skype"         --> doShift "2"
-   , className =? "Emacs24"       --> doShift "3"
+   , className =? "Emacs"         --> doShift "3"
    , className =? "Terminator"    --> doShift "4"
    , className =? "Thunar"        --> doShift "5"
    , className =? "Xfce4-notifyd" --> doIgnore
+   , isFullscreen                 --> doFullFloat
+   , isDialog                     --> doCenterFloat
    ]
 
 main = do
     xmproc <- spawnPipe "~/.cabal/bin/xmobar ~/.xmobarrc"
     xmonad $ defaultConfig
         { manageHook = manageDocks <+> myManageHook <+> manageHook defaultConfig
-        , layoutHook = avoidStruts  $  layoutHook defaultConfig
+        , layoutHook = avoidStruts $ smartBorders $ layoutHook defaultConfig
         , terminal = "terminator"
         , logHook = dynamicLogWithPP xmobarPP
                     { ppOutput = hPutStrLn xmproc
