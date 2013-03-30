@@ -1,19 +1,14 @@
-;; Likely to work only with Emacs24
-
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (setq x-select-enable-clipboard t)
-;; (set-foreground-color "Cornsilk")
-;; (set-background-color "grey30")
-(set-default-font "Ubuntu Mono 13")
-(set-cursor-color "Orchid")
+;;(set-cursor-color "Orchid")
 (setq inhibit-startup-message t)
 (setq make-backup-files         nil)
 (setq auto-save-list-file-name  nil)
 (setq auto-save-default         nil)
-(setq ansi-color-names-vector ; better contrast colors
-      ["black" "red3" "green3" "yellow3"
-       "light steel blue" "magenta3" "cyan3" "white"])
+;;(setq ansi-color-names-vector ; better contrast colors
+;;      ["black" "red3" "green3" "yellow3"
+;;       "light steel blue" "magenta3" "cyan3" "white"])
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (fset 'yes-or-no-p 'y-or-n-p)
 (toggle-scroll-bar -1)
@@ -21,6 +16,9 @@
 (windmove-default-keybindings)
 (global-auto-revert-mode t)
 (setq size-indication-mode t)
+(setq debug-on-error t)
+;; From Emacs 24.1 onwards
+(electric-indent-mode +1)
 
 ;; set up unicode
 (prefer-coding-system       'utf-8)
@@ -69,10 +67,22 @@
 (ido-mode t)
 
 (global-set-key [f6] 'goto-line)
-(global-set-key [f8] 'other-window)
-(global-set-key [f9] (lambda () (interactive) (kill-buffer nil)))
+
+(global-set-key [f7] (lambda () (interactive) (kill-buffer nil)))
+(global-set-key [f8] 'split-window-horizontally)
+(global-set-key [f9] 'other-window)
+(global-set-key [f10] 'delete-other-windows)
 (global-set-key [f11] 'previous-buffer)
 (global-set-key [f12] 'next-buffer)
+
+;;(require 'mime-w3m)
+(require 'flymake)
+(defun flymake-erlang-init ()
+    (list "~/Dropbox/erl/flymake/flymake-erl" (list buffer-file-name)))
+(add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
+(add-hook 'find-file-hook 'flymake-find-file-hook)
+(global-set-key [f3] 'flymake-display-err-menu-for-current-line)
+(global-set-key [f4] 'flymake-goto-next-error)
 
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
@@ -95,6 +105,9 @@
 (require 'sass-mode)
 (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
 
+(require 'puppet-mode)
+(add-to-list 'auto-mode-alist '("\\.pp$" . puppet-mode))
+
 (add-to-list 'load-path "~/.emacs.d/rhtml")
 (require 'rhtml-mode)
 
@@ -105,10 +118,10 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 (setq org-log-done t)
 (setq org-agenda-files (list "~/org/chores.org"
-                             "~/org/goals.org"))
+                             "~/org/projects.org"))
 (setq org-mobile-directory "~/org/mobile")
 
-(load-theme 'zenburn t)
+(load-theme 'solarized-dark t)
 
 (defun  disabled-key ()
     "Assign this to disable a key"
@@ -124,3 +137,37 @@
 (global-set-key (kbd "<C-down>")    'disabled-key)
 (global-set-key (kbd "<C-left>")    'disabled-key)
 (global-set-key (kbd "<C-right>")   'disabled-key)
+
+(defun smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(global-set-key [(shift return)] 'smart-open-line)
+
+(defun visit-term-buffer ()
+  "Create or visit a terminal buffer."
+  (interactive)
+  (if (not (get-buffer "*ansi-term*"))
+      (progn
+        (split-window-sensibly (selected-window))
+        (other-window 1)
+        (ansi-term "/bin/zsh"))
+    (switch-to-buffer-other-window "*ansi-term*")))
+
+(global-set-key (kbd "C-c t") 'visit-term-buffer)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "1df4f61bb50f58d78e88ea75fb8ce27bac04aef1032d4ea6dafe4667ef39eb41" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
