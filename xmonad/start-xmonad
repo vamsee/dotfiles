@@ -4,8 +4,6 @@ gnome-keyring-daemon -d
 
 syndaemon -d -t -i 5.0
 
-xcompmgr -n &
-
 nitrogen --restore &
 
 $HOME/.dropbox-dist/dropboxd &
@@ -15,11 +13,11 @@ if [ -z "$(pgrep nm-applet)" ] ; then
     nm-applet --sm-disable &
 fi
 
-pulseaudio --start &
-
 xscreensaver -no-splash &
 
-xautolock -time 15 -locker "dbus-send --print-reply --system --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Suspend" &
+xautolock -time 15 -locker "/home/vamsee/.xmonad/suspend" &
 chromium-browser &
 
-exec dbus-launch --sh-syntax --exit-with-session xmonad
+xmodmap ~/.Xmodmap &
+
+exec dbus-launch --sh-syntax --exit-with-session /home/vamsee/.cabal/bin/xmonad

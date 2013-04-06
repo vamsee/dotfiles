@@ -19,7 +19,7 @@
 (setq debug-on-error t)
 ;; From Emacs 24.1 onwards
 (electric-indent-mode +1)
-
+(global-hl-line-mode +1)
 ;; set up unicode
 (prefer-coding-system       'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -37,7 +37,9 @@
 (setq-default fill-column 72)
 (setq auto-fill-mode 1)
 
-(show-paren-mode 1)
+(require 'paren)
+(setq show-paren-style 'parenthesis)
+(show-paren-mode +1)
 (defadvice show-paren-function (after show-matching-paren-offscreen
                                       activate)
   (interactive)
@@ -116,11 +118,10 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-(setq org-log-done t)
 (setq org-agenda-files (list "~/org/chores.org"
                              "~/org/projects.org"))
-(setq org-mobile-directory "~/org/mobile")
 
+;; I'm beginning to like this theme
 (load-theme 'solarized-dark t)
 
 (defun  disabled-key ()
@@ -159,3 +160,20 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key (kbd "C-c t") 'visit-term-buffer)
 
+;; force ansi-term to be utf-8 after it launches
+(defadvice ansi-term (after advise-ansi-term-coding-system activate)
+  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+
+(require 'recentf)
+(setq recentf-max-saved-items 100
+      recentf-max-menu-items 15)
+(recentf-mode +1)
+
+(defun recentf-ido-find-file ()
+  "Find a recent file using ido."
+  (interactive)
+  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+    (when file
+      (find-file file))))
+
+(global-set-key (kbd "C-c f")  'recentf-ido-find-file)

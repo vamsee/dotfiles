@@ -1,0 +1,2 @@
+!Turn the Menu key into a Right Windows key.
+keysym Menu = Super_R

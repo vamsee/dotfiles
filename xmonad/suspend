@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# suspend the laptop if on battery
+
+if [ `acpi -a | grep -c "off-line"` -eq "1" ] ; then
+   dbus-send --print-reply --system --dest=org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower.Suspend
+fi
+
+exit 0
