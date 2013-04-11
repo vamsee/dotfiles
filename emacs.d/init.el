@@ -1,14 +1,10 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (setq x-select-enable-clipboard t)
-;;(set-cursor-color "Orchid")
 (setq inhibit-startup-message t)
 (setq make-backup-files         nil)
 (setq auto-save-list-file-name  nil)
 (setq auto-save-default         nil)
-;;(setq ansi-color-names-vector ; better contrast colors
-;;      ["black" "red3" "green3" "yellow3"
-;;       "light steel blue" "magenta3" "cyan3" "white"])
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (fset 'yes-or-no-p 'y-or-n-p)
 (toggle-scroll-bar -1)
@@ -49,27 +45,18 @@
     (if (not (null matching-text))
         (message matching-text))))
 
-(defadvice comint-simple-send (around allow_clear_command activate)
-  "If the input is the word \"clr\", erase buffer."
-  (if (string-equal "clr" string)
-      (progn
-	(kill-word -1)
-	(forward-line 0)
-	(delete-region 1 (point))
-	(end-of-buffer))
-    ad-do-it))
-
 (add-hook 'comint-output-filter-functions 
 	  'comint-watch-for-password-prompt)
 
 (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 (setq semantic-idle-scheduler-idle-time 0)
 
-(require 'ido)
-(ido-mode t)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
 
+(global-set-key [f5] 'shell)
 (global-set-key [f6] 'goto-line)
-
 (global-set-key [f7] (lambda () (interactive) (kill-buffer nil)))
 (global-set-key [f8] 'split-window-horizontally)
 (global-set-key [f9] 'other-window)
@@ -77,7 +64,6 @@
 (global-set-key [f11] 'previous-buffer)
 (global-set-key [f12] 'next-buffer)
 
-;;(require 'mime-w3m)
 (require 'flymake)
 (defun flymake-erlang-init ()
     (list "~/Dropbox/erl/flymake/flymake-erl" (list buffer-file-name)))
@@ -118,6 +104,8 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+(setq org-log-done 'time)
+(setq org-startup-indented nil)
 (setq org-agenda-files (list "~/org/chores.org"
                              "~/org/projects.org"))
 
@@ -148,22 +136,6 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key [(shift return)] 'smart-open-line)
 
-(defun visit-term-buffer ()
-  "Create or visit a terminal buffer."
-  (interactive)
-  (if (not (get-buffer "*ansi-term*"))
-      (progn
-        (split-window-sensibly (selected-window))
-        (other-window 1)
-        (ansi-term "/bin/zsh"))
-    (switch-to-buffer-other-window "*ansi-term*")))
-
-(global-set-key (kbd "C-c t") 'visit-term-buffer)
-
-;; force ansi-term to be utf-8 after it launches
-(defadvice ansi-term (after advise-ansi-term-coding-system activate)
-  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
-
 (require 'recentf)
 (setq recentf-max-saved-items 100
       recentf-max-menu-items 15)
@@ -177,3 +149,24 @@ Position the cursor at its beginning, according to the current mode."
       (find-file file))))
 
 (global-set-key (kbd "C-c f")  'recentf-ido-find-file)
+
+;; display visited file path in emacs' frame title
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
+
+;; kill backwards from cursor
+(global-set-key (kbd "C-<backspace>") (lambda ()
+                                        (interactive)
+                                        (kill-line 0)
+                                        (indent-according-to-mode)))
+
+;; kill whole line and move up region
+(defun smart-kill-whole-line (&optional arg)
+  "A simple wrapper around `kill-whole-line' that respects indentation."
+  (interactive "P")
+  (kill-whole-line arg)
+  (back-to-indentation))
+
+(global-set-key [remap kill-whole-line] 'smart-kill-whole-line)
