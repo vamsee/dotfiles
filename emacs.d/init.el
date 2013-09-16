@@ -13,15 +13,18 @@
 (global-auto-revert-mode t)
 (setq size-indication-mode t)
 (setq debug-on-error t)
+
 ;; From Emacs 24.1 onwards
 (electric-indent-mode +1)
 (global-hl-line-mode +1)
+(delete-selection-mode +1)
+
 ;; set up unicode
 (prefer-coding-system       'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
-(setq default-buffer-file-coding-system 'utf-8)
+(setq buffer-file-coding-system 'utf-8)
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; tabs, indents, etc.
@@ -32,6 +35,13 @@
 (setq-default indent-tabs-mode nil)
 (setq-default fill-column 72)
 (setq auto-fill-mode 1)
+
+;; limit line width to 80 cols
+(require 'whitespace)
+(setq whitespace-style '(face tabs lines trailing))
+(global-whitespace-mode t)
+(setq-default indicate-empty-lines t)
+;;(add-hook 'prog-mode-hook 'whitespace-mode)
 
 (require 'paren)
 (setq show-paren-style 'parenthesis)
@@ -48,7 +58,7 @@
 (add-hook 'comint-output-filter-functions 
 	  'comint-watch-for-password-prompt)
 
-(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+;; (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 (setq semantic-idle-scheduler-idle-time 0)
 
 (setq ido-enable-flex-matching t)
@@ -57,20 +67,12 @@
 
 (global-set-key [f5] 'shell)
 (global-set-key [f6] 'goto-line)
-(global-set-key [f7] (lambda () (interactive) (kill-buffer nil)))
-(global-set-key [f8] 'split-window-horizontally)
-(global-set-key [f9] 'other-window)
-(global-set-key [f10] 'delete-other-windows)
+(global-set-key [f7] 'deft)
+(global-set-key [f8] 'other-window)
+(global-set-key [f9] 'delete-other-windows)
+(global-set-key [f10] (lambda () (interactive) (kill-buffer nil)))
 (global-set-key [f11] 'previous-buffer)
 (global-set-key [f12] 'next-buffer)
-
-(require 'flymake)
-(defun flymake-erlang-init ()
-    (list "~/Dropbox/erl/flymake/flymake-erl" (list buffer-file-name)))
-(add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
-(add-hook 'find-file-hook 'flymake-find-file-hook)
-(global-set-key [f3] 'flymake-display-err-menu-for-current-line)
-(global-set-key [f4] 'flymake-goto-next-error)
 
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
@@ -80,9 +82,11 @@
 ;; Add the original Emacs Lisp Package Archive
 (add-to-list 'package-archives
              '("elpa" . "http://tromey.com/elpa/"))
+
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
+
 ;; Add milkypostman's repository
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
@@ -96,7 +100,6 @@
 (require 'puppet-mode)
 (add-to-list 'auto-mode-alist '("\\.pp$" . puppet-mode))
 
-(add-to-list 'load-path "~/.emacs.d/rhtml")
 (require 'rhtml-mode)
 
 (require 'org-install)
@@ -104,10 +107,17 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-(setq org-log-done 'time)
-(setq org-startup-indented nil)
+(setq org-log-done t)
 (setq org-agenda-files (list "~/org/chores.org"
                              "~/org/projects.org"))
+(setq org-directory "~/org/")
+(setq org-startup-indented t)
+(setq org-archive-location (concat org-directory "archive/%s_archive::"))
+
+;; setup deft to work well with org:
+(setq deft-extension "org")
+(setq deft-text-mode 'org-mode)
+(setq deft-directory "~/org")
 
 ;; I'm beginning to like this theme
 (load-theme 'solarized-dark t)
@@ -170,3 +180,9 @@ Position the cursor at its beginning, according to the current mode."
   (back-to-indentation))
 
 (global-set-key [remap kill-whole-line] 'smart-kill-whole-line)
+(global-unset-key (kbd "C-z"))
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
